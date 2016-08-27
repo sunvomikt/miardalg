@@ -14,6 +14,7 @@ void setup() {
   //pinMode(midio, OUTPUT);
   randomSeed(analogRead(0));
   initScore(score);
+  //ReinitScore(score);
   /*for(int i=0;i<20;i++)
   {
     score2[i][1]=score[i][1];
@@ -27,13 +28,13 @@ void loop() {
   // find the note sc[step] to turn on
   // check if enough time passed and turn it off
   poti = ((analogRead(A0)*3)/10);
-  unsigned long cMillis = millis();
+  cMillis = millis();
   if(steps>19) {
     //we've done a full loop
     noteOn(0xFF,0,0);
-    noteOn(0xFF+midich,0,0);
+    //noteOn(0xFF+midich,0,0);
     ReinitScore(score);
-    ReinitScore(score);
+    //ReinitScore(score);
     steps=0;
     }
   
@@ -74,13 +75,25 @@ void initScore(int sc[20][5]){
    //abs(sin(step)) velocity
    sc[i][2]=abs(sin(i)*100);
    //same but for note length
-   sc[i][3]=abs(sin(i)*100)+random(1,200);
+   sc[i][3]=abs(sin(i)*200)+100;
    }
 
 }
 
 void ReinitScore(int sc[20][5]){
 
+  for(int i=0;i<20;i++)
+  {
+   if(sc[i][1]<0 or sc[i][1]>120) { sc[i][1]=random(gap,120);}  
+   if(sc[i][2]<0 or sc[i][2]>120) { sc[i][2]=random(gap,120);}    
+   sc[i][3]=abs(sin(i)*200)+100;
+  }  
+  
+  //EFFECT 2 RNAADODM
+  for(int i=1;i<20;i++)
+  {
+   if(random(1,10)<5) { sc[i][1]=sc[i-1][1]+random(-1,1)*gap;}    
+  }  
   
   // EFFECT 4 INSERTING BASE NOTES
   for(int i=0;i<20;i++)
@@ -88,38 +101,34 @@ void ReinitScore(int sc[20][5]){
    if(random(1,10)<3) { sc[i][1]=sc[0][1];}    
   } 
   
-  //EFFECT 2 RNAADODM
-  for(int i=0;i<20;i++)
-  {
-   if(random(1,10)<2) { sc[i][1]=sc[i][1]+random(1,gap*2);}    
-  }  
-  
   //EFFECT 3 ARPEGG SIMU
    if(random(1,10)<3) { 
-     sc[1][1]=sc[0][1]+gap;
-     sc[2][1]=sc[1][1]+gap;
      sc[3][1]=sc[0][1]+gap;
      sc[4][1]=sc[1][1]+gap;
-     sc[5][1]=sc[0][1]+gap;
-     sc[6][1]=sc[1][1]+gap;
-     }      
+     sc[5][1]=sc[2][1]+gap;
+     sc[6][1]=sc[0][1]+gap;
+     sc[7][1]=sc[1][1]+gap;
+     sc[8][1]=sc[2][1]+gap;
+     }    
   
   //EFFECT 5, LOWERING PITCH
-  for(int i=0;i<20;i++)
-  {
-   sc[i][1]=sc[i][1]-gap;    
+  if(random(1,10)<3) { 
+    for(int i=0;i<20;i++)
+    {
+     sc[i][1]=sc[i][1]-gap;    
+    }
   }
   
     
   //EFFECT 1, MIRRORING THE WHOLE THING 
   for(int i=0;i<10;i++)
   {
-   sc[20-i][1]=sc[i][1];
-   sc[20-i][2]=sc[i][2];    
+   sc[i][1]=sc[19-i][1];
+   sc[i][2]=sc[19-i][2];    
   }
   
   
-  reinitc+=5;
+  reinitc+=10;
   if (random(0,100)<reinitc) { initScore(sc); }
 
 }
